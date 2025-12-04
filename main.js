@@ -1,9 +1,5 @@
 console.log("Hello, World!");
 
-//game logic
-//when the user clicks on the "buy" button in an upgrade in the shop, the total
-// cookie count decreases by the cost of the upgrade, and the cookies per second goes up
-
 const cookie = document.getElementById("cookie");
 const cookieCountDisplay = document.getElementById("cookie-count");
 const cookiesPerSecondDisplay = document.getElementById("cookies-per-second");
@@ -16,13 +12,6 @@ cookie.addEventListener("click", function () {
   cookieCountDisplay.textContent = stats.cookieCount;
   saveLocalStorage();
 });
-
-//we need functions to contain the game logic
-//we will get the shop upgrades data from the API
-//https://cookie-upgrade-api.vercel.app/api/upgrades
-//to create the logic for the shop upgrades:
-//- OPTION 1: you could have a function to handle each upgrade
-//- OPTION 2: you could have a reusable function that works for all upgrades (probably better)
 
 async function getUpgradesData() {
   const response = await fetch(
@@ -38,9 +27,15 @@ const shopContainer = document.getElementById("shop-container");
 async function createUpgradeElements() {
   const upgradeData = await getUpgradesData();
   await upgradeData.forEach(function (upgrade) {
+    const btnContainer = document.createElement("container");
     const upgradeBtn = document.createElement("button");
+    const upgradeText = document.createElement("p");
     upgradeBtn.textContent = upgrade.name;
-    shopContainer.appendChild(upgradeBtn);
+    btnContainer.appendChild(upgradeBtn);
+    btnContainer.appendChild(upgradeText);
+    shopContainer.appendChild(btnContainer);
+
+    upgradeText.textContent = `Cost: ${upgrade.cost} Cookies Per Second: ${upgrade.increase}`;
     upgradeBtn.addEventListener("click", function () {
       if (stats.cookieCount >= upgrade.cost) {
         stats.cookiesPerSecond += upgrade.increase;
@@ -76,21 +71,9 @@ function loadLocalStorage() {
 }
 
 loadLocalStorage();
-//=============
-
-//data storage
-//global scope
-
-//if there is data already in local storage, update stats with this data, so the user picks it up where they left off
-
-//=============
-
-//the interval
 
 setInterval(function () {
   stats.cookieCount += stats.cookiesPerSecond;
-  //update the DOM to reflect changes in the values
-  //save values in local storage
   saveLocalStorage();
   updateStats();
 }, 1000);
