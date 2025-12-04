@@ -14,6 +14,7 @@ cookiesPerSecondDisplay.textContent = "0";
 cookie.addEventListener("click", function () {
   stats.cookieCount += 1;
   cookieCountDisplay.textContent = stats.cookieCount;
+  saveLocalStorage();
 });
 
 //we need functions to contain the game logic
@@ -45,51 +46,42 @@ async function createUpgradeElements() {
         stats.cookiesPerSecond += upgrade.increase;
         stats.cookieCount -= upgrade.cost;
         updateStats();
+        saveLocalStorage();
       }
     });
   });
 }
 createUpgradeElements();
 
-function updateStats() {
-  cookieCountDisplay.textContent = stats.cookieCount;
-  cookiesPerSecondDisplay.textContent = stats.cookiesPerSecond;
-}
-//tip on local storage:
-//- make sure the local sotrage values are updated after the user buys an
-//upgrade and the user clicks on the cookie
-
-//=============
-
-//data storage
-//global scope
-
 let stats = {
   cookieCount: 0,
   cookiesPerSecond: 0,
 };
 
-//if there is data already in local storage, update stats with this data, so the user picks it up where they left off
+function updateStats() {
+  cookieCountDisplay.textContent = stats.cookieCount;
+  cookiesPerSecondDisplay.textContent = stats.cookiesPerSecond;
+}
 
+function saveLocalStorage() {
+  let stringifiedStats = JSON.stringify(stats);
+  localStorage.setItem("stats", stringifiedStats);
+}
+
+function loadLocalStorage() {
+  const storedStats = localStorage.getItem("stats");
+  const parsedStats = JSON.parse(storedStats);
+  stats = parsedStats;
+  updateStats();
+}
+
+loadLocalStorage();
 //=============
 
-//shop upgrades
-//fetch the shop upgrades from the API
-//create multiple DOM elements to contain the ugprades (loop)
+//data storage
+//global scope
 
-//TODO: create DOM elements for the shop upgrades
-//- create elemenet
-//- assing the value to its property (textContent)
-//- append it to the DOM
-
-//after completed, you should see the upgrades in the shop container
-
-//TODO: create function(s) to handle the purchase action
-//the user needs a button to buy the item
-//when the uesr clicks the button:
-//subtract cost of upgrade from total cookie count
-//increase cookies per second by the upgrade's cps value
-//save new values in local storage
+//if there is data already in local storage, update stats with this data, so the user picks it up where they left off
 
 //=============
 
@@ -99,5 +91,6 @@ setInterval(function () {
   stats.cookieCount += stats.cookiesPerSecond;
   //update the DOM to reflect changes in the values
   //save values in local storage
+  saveLocalStorage();
   updateStats();
 }, 1000);
