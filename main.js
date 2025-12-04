@@ -1,13 +1,15 @@
 console.log("Hello, World!");
 
 //game logic
-//when the user clicks on the cookie, increase the cookie count by 1
 //when the user clicks on the "buy" button in an upgrade in the shop, the total
 // cookie count decreases by the cost of the upgrade, and the cookies per second goes up
 
 const cookie = document.getElementById("cookie");
 const cookieCountDisplay = document.getElementById("cookie-count");
 const cookiesPerSecondDisplay = document.getElementById("cookies-per-second");
+
+cookieCountDisplay.textContent = "0";
+cookiesPerSecondDisplay.textContent = "0";
 
 cookie.addEventListener("click", function () {
   stats.cookieCount += 1;
@@ -21,6 +23,38 @@ cookie.addEventListener("click", function () {
 //- OPTION 1: you could have a function to handle each upgrade
 //- OPTION 2: you could have a reusable function that works for all upgrades (probably better)
 
+async function getUpgradesData() {
+  const response = await fetch(
+    "https://cookie-upgrade-api.vercel.app/api/upgrades"
+  );
+  const data = await response.json();
+  console.log(data);
+  return data;
+}
+
+const shopContainer = document.getElementById("shop-container");
+
+async function createUpgradeElements() {
+  const upgradeData = await getUpgradesData();
+  await upgradeData.forEach(function (upgrade) {
+    const upgradeBtn = document.createElement("button");
+    upgradeBtn.textContent = upgrade.name;
+    shopContainer.appendChild(upgradeBtn);
+    upgradeBtn.addEventListener("click", function () {
+      if (stats.cookieCount >= upgrade.cost) {
+        stats.cookiesPerSecond += upgrade.increase;
+        stats.cookieCount -= upgrade.cost;
+        updateStats();
+      }
+    });
+  });
+}
+createUpgradeElements();
+
+function updateStats() {
+  cookieCountDisplay.textContent = stats.cookieCount;
+  cookiesPerSecondDisplay.textContent = stats.cookiesPerSecond;
+}
 //tip on local storage:
 //- make sure the local sotrage values are updated after the user buys an
 //upgrade and the user clicks on the cookie
@@ -65,4 +99,5 @@ setInterval(function () {
   stats.cookieCount += stats.cookiesPerSecond;
   //update the DOM to reflect changes in the values
   //save values in local storage
+  updateStats();
 }, 1000);
