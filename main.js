@@ -5,6 +5,15 @@ console.log("Hello, World!");
 //when the user clicks on the "buy" button in an upgrade in the shop, the total
 // cookie count decreases by the cost of the upgrade, and the cookies per second goes up
 
+const cookie = document.getElementById("cookie");
+const cookieCountDisplay = document.getElementById("cookie-count");
+const cookiesPerSecondDisplay = document.getElementById("cookies-per-second");
+
+cookie.addEventListener("click", function () {
+  stats.cookieCount += 1;
+  cookieCountDisplay.textContent = stats.cookieCount;
+});
+
 //we need functions to contain the game logic
 //we will get the shop upgrades data from the API
 //https://cookie-upgrade-api.vercel.app/api/upgrades
