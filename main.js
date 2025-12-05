@@ -8,6 +8,7 @@ cookieCountDisplay.textContent = "0";
 cookiesPerSecondDisplay.textContent = "0";
 
 cookie.addEventListener("click", function () {
+  new Audio("sounds/click.wav").play();
   stats.cookieCount += 1;
   cookieCountDisplay.textContent = stats.cookieCount;
   saveLocalStorage();
