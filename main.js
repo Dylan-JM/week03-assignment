@@ -4,6 +4,11 @@ const cookie = document.getElementById("cookie");
 const cookieCountDisplay = document.getElementById("cookie-count");
 const cookiesPerSecondDisplay = document.getElementById("cookies-per-second");
 
+let stats = {
+  cookieCount: 0,
+  cookiesPerSecond: 0,
+};
+
 cookieCountDisplay.textContent = "0";
 cookiesPerSecondDisplay.textContent = "0";
 
@@ -49,11 +54,6 @@ async function createUpgradeElements() {
 }
 createUpgradeElements();
 
-let stats = {
-  cookieCount: 0,
-  cookiesPerSecond: 0,
-};
-
 function updateStats() {
   cookieCountDisplay.textContent = stats.cookieCount;
   cookiesPerSecondDisplay.textContent = stats.cookiesPerSecond;
@@ -66,9 +66,11 @@ function saveLocalStorage() {
 
 function loadLocalStorage() {
   const storedStats = localStorage.getItem("stats");
-  const parsedStats = JSON.parse(storedStats);
-  stats = parsedStats;
-  updateStats();
+  if (storedStats) {
+    const parsedStats = JSON.parse(storedStats);
+    stats = parsedStats;
+    updateStats();
+  }
 }
 
 loadLocalStorage();
